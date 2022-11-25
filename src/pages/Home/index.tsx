@@ -111,7 +111,9 @@ const Home: React.FC = () => {
                 <PostItem
                   key={post._id}
                   post={post}
-                  isLogin={userInfo?.username ? true : false}
+                  isLogin={
+                    post.poster?.login === userInfo?.login ? true : false
+                  }
                   onEdit={handleEdit}
                   onDelete={handleDelete}
                 />
