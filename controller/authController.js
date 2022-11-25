@@ -22,7 +22,6 @@ const gitAuth = async (request, response) => {
   });
 
   if (user) {
-    console.log(user);
     const authToken = jwt.sign(
       {
         id: user._id,
