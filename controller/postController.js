@@ -75,7 +75,7 @@ const newPost = async (request, response) => {
 const deletPost = async (request, response) => {
   const _id = request.params.id;
   const { id } = request.user;
-  const post = await Post.findOne({ poster: id });
+  const post = await Post.findOne({ poster: id, _id: _id });
   if (post) {
     const result = await Post.deleteOne({ _id: _id });
 
@@ -92,7 +92,7 @@ const deletPost = async (request, response) => {
 const editPost = async (request, response) => {
   const { _id, context, isPrivate } = request.body;
   const { id } = request.user;
-  const post = await Post.findOne({ poster: id });
+  const post = await Post.findOne({ poster: id, _id: _id });
   if (post) {
     const newPost = new Post({
       _id: _id,
