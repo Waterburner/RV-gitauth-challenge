@@ -73,38 +73,48 @@ const newPost = async (request, response) => {
 };
 
 const deletPost = async (request, response) => {
-  const id = request.params.id;
-  const result = await Post.deleteOne({ _id: id });
+  const _id = request.params.id;
+  const { id } = request.user;
+  const post = await Post.findOne({ poster: id });
+  if (post) {
+    const result = await Post.deleteOne({ _id: _id });
 
-  if (result.deletedCount === 1) {
-    response.send({ message: "Successfully deleted", error: false });
+    if (result.deletedCount === 1) {
+      response.send({ message: "Successfully deleted", error: false });
+    } else {
+      response.send({ message: "delete failed", error: true });
+    }
   } else {
-    response.send({ message: "delete failed", error: true });
+    response.send({ message: "You aren't a owner of this post", error: true });
   }
 };
 
 const editPost = async (request, response) => {
   const { _id, context, isPrivate } = request.body;
   const { id } = request.user;
-
-  const newPost = new Post({
-    _id: _id,
-    poster: id,
-    context,
-    isPrivate,
-    created: new Date(),
-  });
-
-  try {
-    await Post.updateOne({ _id: _id }, newPost);
-    response.send({
-      error: false,
-      newPost,
-      message: "Successfully edited the post",
+  const post = await Post.findOne({ poster: id });
+  if (post) {
+    const newPost = new Post({
+      _id: _id,
+      poster: id,
+      context,
+      isPrivate,
+      created: new Date(),
     });
-  } catch (err) {
-    console.log("Error", err);
-    response.send({ error: true });
+
+    try {
+      await Post.updateOne({ _id: _id }, newPost);
+      response.send({
+        error: false,
+        newPost,
+        message: "Successfully edited the post",
+      });
+    } catch (err) {
+      console.log("Error", err);
+      response.send({ error: true });
+    }
+  } else {
+    response.send({ message: "You aren't a owner of this post", error: true });
   }
 };
 
